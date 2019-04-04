@@ -67,19 +67,21 @@
 
    (3)、rm命令： remove
 
-  
+   命令格式：rm [OPTION]... FILE...
 
-  ​                         rm [OPTION]... FILE...
-  ​       
-  ​       常用选项：
-  ​          -i: interactive 交互式
-  ​          -f: force  强制
-  ​          -r： recursive 递归
+  常用选项：
 
-  ​          删除目录：rm -rf /PATH/TO/DIR
-  ​               危险操作： rm -rf /*
+  ​     -i: interactive 交互式
 
-  ​          注意：在生产环境中，所有不用的文件建议不要直接删除，而是移动至某个人专用目录；（模拟回收站）
+  ​     -f: force  强制
+
+  ​     -r： recursive 递归
+
+  删除目录：rm -rf /PATH/TO/DIR
+
+  危险操作： rm -rf /*
+
+  注意：在生产环境中，所有不用的文件建议不要直接删除，而是移动至某个人专用目录；（模拟回收站）
 
   
 
