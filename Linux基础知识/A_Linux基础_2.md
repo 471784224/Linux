@@ -44,7 +44,9 @@
   	               xattr:扩展属性
   	               links: 符号链接
   	               all: 上述所有属性
-     (2)、mv命令
+     
+
+  (2)、mv命令
 
   ​	用法和cp命令类似
 
@@ -61,7 +63,11 @@
              		-i:交互式
              		-f:force
 
-  ​    (3)、rm命令： remove
+     
+
+   (3)、rm命令： remove
+
+  
 
   ​                         rm [OPTION]... FILE...
   ​       
