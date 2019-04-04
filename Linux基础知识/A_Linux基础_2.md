@@ -9,42 +9,41 @@
    (1)、cp命令： copy
               源文件：目标文件；
 
-  ​			cp - copy files and directories
-
-  ​		单源复制： cp [OPTION]... [-T] SOURCE DEST
-  ​       	 多源复制： cp [OPTION]... SOURCE... DIRECTORY
-  ​		                    cp [OPTION]... -t DIRECTORY SOURCE...
-
-  ​      A、单源复制： cp [OPTION]... [-T] SOURCE DEST
-  ​                     如果DEST不存在，则事先创建此文件，并复制源文件的数据流至DEST中；
-  ​                     如果DEST存在：
-  ​                     如果DEST是非目录文件；则覆盖目标文件；
-  ​                     如果DEST是目录文件：则现在DEST目录下创建一个与源文件同名的文件，并复制其数据流；
-
-  ​      B、多源复制
-  ​                      cp [OPTION]... SOURCE... DIRECTORY
-  ​                      cp [OPTION]... -t DIRECTORY SOURCE...
-
-  ​                    如果DEST不存在：错误；
-  ​                    如果DEST存在:
-  ​                         如果DEST是非目录文件： 错误；
-  ​                         如果DEST是目录文件： 分别复制每个文件至目标目录中，并保持原名;
-
-  ​        常用选项
-  ​             -i: 交互式复制，即覆盖之前提醒用户去人；
-  ​             -f: --force 强制覆盖目标文件； 
-  ​             -r，-R: 递归复制目录；
-  ​             -d: 复制符号链接文件本身，而非其指向的源文件；
-  ​             -a：-dR --preserve=all,archive,用于实现归档；
-  ​             --preserv=
-  ​                   mode:权限
-  ​                   ownership:属主和属组
-  ​                   timestamps：时间戳
-  ​                   context:安全标签
-  ​                   xattr:扩展属性
-  ​                   links: 符号链接
-  ​                   all: 上述所有属性
-
+  			cp - copy files and directories
+  	
+  		单源复制： cp [OPTION]... [-T] SOURCE DEST
+  	   	 多源复制： cp [OPTION]... SOURCE... DIRECTORY
+  		                    cp [OPTION]... -t DIRECTORY SOURCE...
+  	
+  	  A、单源复制： cp [OPTION]... [-T] SOURCE DEST
+  	                 如果DEST不存在，则事先创建此文件，并复制源文件的数据流至DEST中；
+  	                 如果DEST存在：
+  	                 如果DEST是非目录文件；则覆盖目标文件；
+  	                 如果DEST是目录文件：则现在DEST目录下创建一个与源文件同名的文件，并复制其数据流；
+  	
+  	  B、多源复制
+  	                  cp [OPTION]... SOURCE... DIRECTORY
+  	                  cp [OPTION]... -t DIRECTORY SOURCE...
+  	
+  	                如果DEST不存在：错误；
+  	                如果DEST存在:
+  	                     如果DEST是非目录文件： 错误；
+  	                     如果DEST是目录文件： 分别复制每个文件至目标目录中，并保持原名;
+  	
+  	    常用选项
+  	         -i: 交互式复制，即覆盖之前提醒用户去人；
+  	         -f: --force 强制覆盖目标文件； 
+  	         -r，-R: 递归复制目录；
+  	         -d: 复制符号链接文件本身，而非其指向的源文件；
+  	         -a：-dR --preserve=all,archive,用于实现归档；
+  	         --preserv=
+  	               mode:权限
+  	               ownership:属主和属组
+  	               timestamps：时间戳
+  	               context:安全标签
+  	               xattr:扩展属性
+  	               links: 符号链接
+  	               all: 上述所有属性
      (2)、mv命令
 
   ​	用法和cp命令类似
