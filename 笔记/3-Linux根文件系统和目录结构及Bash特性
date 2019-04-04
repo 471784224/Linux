@@ -1,0 +1,739 @@
+Linux根文件系统和目录结构及Bash特性
+
+一、Linux目录结构和根文件系统全面讲解
+
+
+回顾：
+   
+   如何获取使用帮助：
+      help,--help,man,info
+      自带文旦当（README,CHANGELOG,INSTALL）官方文档
+      发行版的文档
+      Google
+
+      Linux Kerenel:Documentation
+
+      manual: 使用手册
+
+
+      
+
+   Linux文件系统：
+
+
+        Linux: glibc库
+
+        编译：把程序的源代码转换成二进制格式的CPU指令（汇编代码）的过程
+
+        程序编译方式；
+            动态链接编译
+            静态链接编译
+        
+        进程的类型：
+        终端：硬件设备，关联一个用户接口
+
+        与终端相关：通过终端启动
+        与终端无关：操作引导启动过程当中自动启动
+
+
+
+        shell程序是独特的程序，负责解析用户提供的命令；
+        库文件也是程序文件
+
+        操作系统的组成；
+            静态：Kernel,application
+
+
+            文件系统：层级结构
+
+
+       FHS: 
+         Filesystem Hierarchy Standard 文件系统层级结构标准
+
+           /bin:    所有用户可用的基本命令程序文件；
+           /sbin:   供系统管理使用的工具程序；
+           /boot:   引导加载器必须用到的各静态文件：kernel,initramfs(initrd),grub等；
+           /dev:    存储特殊文件或设备文件；
+                  设备有两种类型：字符设备(线性设备)、块设备（随机设备）；
+           /etc:    系统程序的配置文件，只能为静态；不能为二进制可执行文件
+           /home:  普通用户家目录的集中位置；一般每个普通用户的家目录默认为此目录下域用户名同名的子目录：/home/USERNAME;(optional)可选目录
+           /root:  管理员的家目录: 可选：
+           /lib:   存放库文件 为系统启动或根文件系统上的应用程（bin, /sbin等）提供共享库，以及为内核提供内核模块
+                 lib.so.*:动态链接的C库
+                 ld*: 运行时连接器的C库
+                 modules:用于存储内核模块的目录：
+
+           /lib<qual>     example. /lib64：64位系统特有的存放64共享库的路径：
+
+           /media: 为可移动便携设备提供挂载点,cdrom,floppy等；
+           /mnt: 其他文件系统的临时挂载点；
+           /opt: 附件应用程序的安装位置；可选路径；
+           /srv: 当前主机为服务提供的数据；
+           /tmp: 为那些会产生临时文件的程序提供的用于存储临时文件的目录；可供所有用户执行写入操作；有特殊权限；
+           /usr: user Hierarchy  /usr is Universal shareable,read-only data，全局共享只读数据路劲
+                子目录：bin,sbin,,lib,lib64
+                       include: C程序头文件
+                       share:命令手册页和命令自带文档等架构特有的文件的存储位置
+                       local:另一个层级目录；
+                       X11R6:X-winddow程序的安装位置
+                       src:（Srouce code）程序源码文件的存储位置
+参考：
+          The following directories, or symbolic links to directories, are required in /usr.
+
+               Directory	Description
+               bin	Most user commands
+               include	Header files included by C programs
+               lib	Libraries
+               local	Local hierarchy (empty after main installation)
+               sbin	Non-vital system binaries
+               share	Architecture-independent data
+           
+          
+           /usr/local:  Local hierarchy,让系统管理员安装本地应用程序；也通常用于安装第三方程序；
+
+           The following directories, or symbolic links to directories, must be in /usr/local
+
+			Directory	Description
+			bin	Local binaries
+			etc	Host-specific system configuration for local binaries
+			games	Local game binaries
+			include	Local C header files
+			lib     Local libraries
+			man	    Local online manuals
+			sbin	Local system binaries
+			share	Local architecture-independent hierarchy
+			src	    Local source code
+
+		   /var:  /var Hierarchy,存储常发生班花的数据的目录：例如管理和日志数据，spool文件夹和文件，临时文件等；
+
+
+
+FHS参考
+		   The following directories, or symbolic links to directories, are required in /var.
+
+			Directory	Description
+			cache	    Application cache data
+			lib	        Variable state information
+			local	    Variable data for /usr/local
+			lock	    Lock files
+			log	        Log files and directories
+			opt	        Variable data for /opt
+			run	        Data relevant to running processes
+			spool	    Application spool data
+			tmp	T       emporary files preserved between system reboots
+			
+			Several directories are `reserved' in the sense that they must not be used arbitrarily by some new application, since they would conflict with historical and/or local practice. They are:
+
+				    /var/backups
+				    /var/cron
+				    /var/msgs
+				    /var/preserve
+
+
+			/proc:基于内存的虚拟文件系统，用于为内核及进程存储器相关信息：它们多为内核参数，例如net.ipv4.ip_forward,虚拟为net/ipvr/ip_forward,
+			    存储于/proc/sys/,因此其完整路径为、/proc/sys/net/ipv4/ip_forward
+
+			/sys: sysfs虚拟文件系统提供了一种比proc更为理想的访问内黑数据的途径：其主要作用在于管理Linux设备提供一种统一模型的接口
+
+
+			参考：https://www.ibm.com/developerworks/cn/linux/l-cn-sysfs/《使用 /sys 文件系统访问 Linux 内核》
+
+				/sys 下的子目录	所包含的内容
+				
+				/sys/devices	这是内核对系统中所有设备的分层次表达模型，也是 /sys 文件系统管理设备的最重要的目录结构，下文会对它的内部结构作进一步分析；
+				
+				/sys/dev	    这个目录下维护一个按字符设备和块设备的主次号码(major:minor)链接到真实的设备(/sys/devices下)的符号链接文件，它是在内核 2.6.26 首次引入；
+				
+				/sys/bus	    这是内核设备按总线类型分层放置的目录结构， devices 中的所有设备都是连接于某种总线之下，在这里的每一种具体总线之下可以找到每一个具体设备的符号链接，它也是构成 Linux 统一设备模型的一部分；
+				
+				/sys/class	    这是按照设备功能分类的设备模型，如系统所有输入设备都会出现在 /sys/class/input 之下，而不论它们是以何种总线连接到系统。它也是构成 Linux 统一设备模型的一部分；
+				
+				/sys/block	    这里是系统中当前所有的块设备所在，按照功能来说放置在 /sys/class 之下会更合适，但只是由于历史遗留因素而一直存在于 /sys/block, 但从 2.6.22 开始就已标记为过时，只有在打开了 CONFIG_SYSFS_DEPRECATED 配置下编译才会有这个目录的存在，并且在 2.6.26 内核中已正式移到 /sys/class/block, 旧的接口 /sys/block 为了向后兼容保留存在，但其中的内容已经变为指向它们在 /sys/devices/ 中真实设备的符号链接文件；
+				
+				/sys/firmware	这里是系统加载固件机制的对用户空间的接口，关于固件有专用于固件加载的一套API，在附录 LDD3 一书中有关于内核支持固件加载机制的更详细的介绍；
+				
+				/sys/fs	        这里按照设计是用于描述系统中所有文件系统，包括文件系统本身和按文件系统分类存放的已挂载点，但目前只有 fuse,gfs2 等少数文件系统支持 sysfs 接口，一些传统的虚拟文件系统(VFS)层次控制参数仍然在 sysctl (/proc/sys/fs) 接口中中；
+				
+				/sys/kernel	    这里是内核所有可调整参数的位置，目前只有 uevent_helper, kexec_loaded, mm, 和新式的 slab 分配器等几项较新的设计在使用它，其它内核可调整参数仍然位于 sysctl (/proc/sys/kernel) 接口中 ;
+				
+				/sys/module	    这里有系统中所有模块的信息，不论这些模块是以内联(inlined)方式编译到内核映像文件(vmlinuz)中还是编译为外部模块(ko文件)，都可能会出现在 /sys/module 中：
+				编译为外部模块(ko文件)在加载后会出现对应的 /sys/module/<module_name>/, 并且在这个目录下会出现一些属性文件和属性目录来表示此外部模块的一些信息，如版本号、加载状态、所提供的驱动程序等；
+				编译为内联方式的模块则只在当它有非0属性的模块参数时会出现对应的 /sys/module/<module_name>, 这些模块的可用参数会出现在 /sys/modules/<modname>/parameters/<param_name> 中，
+				如 /sys/module/printk/parameters/time 这个可读写参数控制着内联模块 printk 在打印内核消息时是否加上时间前缀；
+				所有内联模块的参数也可以由 "<module_name>.<param_name>=<value>" 的形式写在内核启动参数上，如启动内核时加上参数 "printk.time=1" 与 向 "/sys/module/printk/parameters/time" 写入1的效果相同；
+				没有非0属性参数的内联模块不会出现于此。
+				
+				/sys/power	    这里是系统中电源选项，这个目录下有几个属性文件可以用于控制整个机器的电源状态，如可以向其中写入控制命令让机器关机、重启等。
+
+          
+            系统优化通过/proc和/sys 内文件参数调整实现
+
+   《奇点临近》
+           
+   
+
+   二、Linux基础命令及命令历史
+
+   Linux系统上的文件类型：
+       -：常规文件：即f:
+       d：directory,目录文件；
+       b:blockdevice，块设备文件，以“block”为单位进行随机访问
+       c:character device,字符设备文件，支持以“character"为单位进行线性访问
+          maior number:主设备号，用标识设备类型，进而确定要加载的驱动程序
+          minor number:次设备号，用于标识同一类型中的不同设备；
+              8位二进制: 0-255
+       l:symbolic link,符号链接文件（软链接文件）；
+       P: pipe，命名管道
+       s: socket,套接字文件； (常用于服务提供)
+
+
+    基本命令：
+
+         命令类型:
+             外部命令
+             内部命令（shell内嵌命令）
+             
+             type COMMAND:
+                   内部：builtin
+                   外部：显示为命令文件路径；
+                        注意：命令可以有别名；别名可以与原名相同，此时原名被隐藏；此时如果要运行原命令，则使用\COMMAND；
+
+					 [root@bogon ~]# type ls
+					ls 是 `ls --color=auto' 的别名
+					[root@bogon ~]# ls
+					anaconda-ks.cfg  Desktop  Documents  Downloads  Music  Pictures  Public  Templates  Videos  桌面
+					[root@bogon ~]# \ls
+					anaconda-ks.cfg  Desktop  Documents  Downloads	Music  Pictures  Public  Templates  Videos  桌面
+			
+			命令别名：
+			     获取所有可用别名的定义：
+			           ~]# alias
+			     定义别名：
+			           ~]# alias NAME='COMMAND'
+
+			           注意：仅对当前shell进程有效
+			     撤销别名：
+			           ~]# unalias NAME
+
+ 
+
+         which命令
+         
+            which - shows the full path of (shell) commands
+
+            which [options] programname [...]
+               --skip-alias  忽略别名
+         
+
+         whereis命令 
+             whereis - locate the binary, source, and manual page files for a command
+
+             whereis [options]  name...
+             -b: 仅搜索二进制程序路径
+             -m： 仅搜索使用手册文件路径
+
+         who命令 
+              who - show who is logged on
+
+               who - show who is logged on
+                  -b: 系统最近一次启动时间；
+                  -d: 显示死亡的进程
+                  -l: 显示登陆进程
+                  -u: 列出登陆的用户
+                  -r:显示运行级别
+         w命令
+               w - Show who is logged on and what they are doing
+
+
+
+    bash的基础特性之一：
+
+
+       命令历史：shell进程会在其会话中保存此前用户提交执行过的命令
+         ~]# history
+            定制history的功能，可通过环境变量实现：
+                  HISTSIZE: shell进程可保留的命令历史的条数
+                  HISTFILE: 持久保存命令历史的文件
+                           .bash_history
+                  HISTFILESIZE: 命令历史文件的大小
+
+           命令用法
+                 history [-c] [-d 偏移量] [n] 
+                 或 history -anrw [文件名] 
+                 或 history -ps 参数 [参数...]
+
+					选项：
+					-c:    清空命令历史：
+					-d offset:  删除指定命令历史
+					    history -d 300   删除第300条历史命令
+					-r	读取历史文件并将内容追加到历史列表中
+    	            -w	将当前历史列表中的命令追加到历史文件中	
+    	            history #:显示最近的#条命令：
+
+            调用命令历史列表中的命令：
+                  ！#：再一次执行历史列表中的第#条命令；
+                  !!： 再一次执行上一条命令；
+                  ！STRING:再一次执行命令历史列表中最近一个以STRING开头的命令；
+
+                      注意：命令的重复执行有时候需要依赖于幂等性（多次重复执行效果是相同的）;
+
+            调用上一条命令的最后一个参数
+            快捷键：ESC,.
+            字符串：!$
+
+            控制命令历史记录的方式：
+                环境变量： HISTCONTROL
+                      ignoredups: 忽略（连续）重复的命令；
+                      ignorespace: 忽略以空白字符开头的命令；
+                      ignoreboth:以上两者同时生效；
+
+                修改变量的直
+                    NAME='VALUE'     
+                       注意：仅对当前shell进程有效  
+
+
+回顾：
+
+    FHS、命令及bash命令历史
+        FHS:
+           /bin,/sbin,/lib,/lib64,/etc
+           /home,/root
+           /boot
+           /mnt,/media
+           /proc,/sys
+           /tmp
+           /srv
+           /opt
+           /dev
+           /usr
+               bin,sbin,lib,lib64,share,local,include...
+           /var
+               chace,lib,log,...
+
+     命令：which，whereis,who,w,alias,unlias
+     命令历史：history
+     文件类型：-,d,b,c,l,p,s
+
+     
+Linux基础知识
+
+  bash的基础特性：
+
+
+    命令补全：
+        shell程序在接收到用户执行命令的请求，分析完成之后，最左侧字符串会被当做命令；
+        命令查找机制：
+            查找内部命令；
+            根据PATH环境变量中设定的目录，自左而右逐个搜索目录下的文件名；
+        
+        按tab补全命令
+        给定的打头字符串如果能唯一标识某命令程序文件，则直接补全；
+                          不能唯一标识某命令程序文件，再击一次tab键，会给出相关可供选择的命令列表；
+
+    路径补全：
+       在给定的起始路径下，以对应路径下的打头字串来逐一匹配其实路径下的每个文件；
+           tab:
+                如果能唯一标识，则直接补全；
+                否则，再一次tab，给出列表；
+
+    多使用补全机制，避免出错  
+
+
+  目录管理类的命令：
+      mkdir,rmdir
+
+      mkdir: make directories  创建目录
+
+           mkdir [OPTION]... DIRECTORY...
+
+                mkdir /tmp/x/y/z                 注意：路径基名方为命令的作用对象；基名之前的路径必须得存在，但是下列情况可以解决这个问题
+
+
+                    -p:自动按需创建父目录；
+                    -v:verbose,显示详细过程
+                    -m: MODE:直接给定权限：（否则为默认权限）
+      rmdir: remove  empty directories 移除空目录
+           rmdir [OPTION]... DIRECTORY...      
+               -p: 删除某目录后，如果其父目录为空，则一并删除之；
+               -V：显示过程；
+
+    问题1：如何创建/tmp/x/y1,/tmp/x/y2,/tmp/x/y1/a,/tmp/x/y1/b?
+    问题2：如何创建a_c,a_d,b_c,b_d;
+
+
+  bash的基础特性之： 命令行展开
+      ~：自动展开为用户的家目录，或指定的用户的家目录；
+      {}：可承载一个以逗号分隔的路径列表，并能够将其展开为多个路径；
+              例如：/tmp{a,b}相当于/tmp/a, tmp/b
+
+     问题1
+				[root@localhost ~]# rm -rf /tmp/x
+				[root@localhost ~]# mkdir -pv /tmp/x/{y1/{a,b},y2}
+				mkdir: 已创建目录 "/tmp/x"
+				mkdir: 已创建目录 "/tmp/x/y1"
+				mkdir: 已创建目录 "/tmp/x/y1/a"
+				mkdir: 已创建目录 "/tmp/x/y1/b"
+				mkdir: 已创建目录 "/tmp/x/y2"
+
+				[root@localhost ~]# tree /tmp/x
+				/tmp/x
+				|-- y1
+				|   |-- a
+				|   `-- b
+				`-- y2
+
+				4 directories, 0 files
+
+
+     问题2：     
+				[root@localhost ~]# mkdir -v {a,b}_{c,d}
+				mkdir: 已创建目录 "a_c"
+				mkdir: 已创建目录 "a_d"
+				mkdir: 已创建目录 "b_c"
+				mkdir: 已创建目录 "b_d"
+     
+     问题3：创建如下目录结构：
+            /tmp/mysysroot/
+                bin
+                sbin
+                etc
+                    sysconfig
+                          network-scripts
+                usr
+                    bin
+                    sbin
+                    local
+                        bin
+                        sbin
+                        etc
+                        lib
+                    lib
+                    lib6
+                var
+                    cache
+                    log
+                    run
+
+             ~]# mkdir -pv /tmp/mysysroot/{bin,sbin,etc/sysconfig/network-scripts,usr/{bin,sbin,local/{bin,sbin,etc,lib},lib,lib64},var/{cache,log,run}}
+
+参考：
+[root@localhost ~]# mkdir -pv /tmp/mysysroot/{bin,sbin,etc/sysconfig/network-scripts,usr/{bin,sbin,local/{bin,sbin,etc,lib},lib,lib64},var/{cache,log,run}}
+mkdir: 已创建目录 "/tmp/mysysroot"
+mkdir: 已创建目录 "/tmp/mysysroot/bin"
+mkdir: 已创建目录 "/tmp/mysysroot/sbin"
+mkdir: 已创建目录 "/tmp/mysysroot/etc"
+mkdir: 已创建目录 "/tmp/mysysroot/etc/sysconfig"
+mkdir: 已创建目录 "/tmp/mysysroot/etc/sysconfig/network-scripts"
+mkdir: 已创建目录 "/tmp/mysysroot/usr"
+mkdir: 已创建目录 "/tmp/mysysroot/usr/bin"
+mkdir: 已创建目录 "/tmp/mysysroot/usr/sbin"
+mkdir: 已创建目录 "/tmp/mysysroot/usr/local"
+mkdir: 已创建目录 "/tmp/mysysroot/usr/local/bin"
+mkdir: 已创建目录 "/tmp/mysysroot/usr/local/sbin"
+mkdir: 已创建目录 "/tmp/mysysroot/usr/local/etc"
+mkdir: 已创建目录 "/tmp/mysysroot/usr/local/lib"
+mkdir: 已创建目录 "/tmp/mysysroot/usr/lib"
+mkdir: 已创建目录 "/tmp/mysysroot/usr/lib64"
+mkdir: 已创建目录 "/tmp/mysysroot/var"
+mkdir: 已创建目录 "/tmp/mysysroot/var/cache"
+mkdir: 已创建目录 "/tmp/mysysroot/var/log"
+mkdir: 已创建目录 "/tmp/mysysroot/var/run"
+
+[root@localhost ~]# tree /tmp/mysysroot
+/tmp/mysysroot
+|-- bin
+|-- etc
+|   `-- sysconfig
+|       `-- network-scripts
+|-- sbin
+|-- usr
+|   |-- bin
+|   |-- lib
+|   |-- lib64
+|   |-- local
+|   |   |-- bin
+|   |   |-- etc
+|   |   |-- lib
+|   |   `-- sbin
+|   `-- sbin
+`-- var
+    |-- cache
+    |-- log
+    `-- run
+
+19 directories, 0 files
+
+      
+      tree命令：
+        tree [options] [directory]
+            -L level:指定要显示的层级，（如果不指定会显示所有层级）
+
+
+bash的基础特性：命令的执行状态结果
+      
+      命令执行的状态结果：
+         bash通过状态返回值来输出此结果：
+             成功：0
+             失败：1-255
+
+         命令执行完成之后，其状态返回值保存于bash的特殊变量$?
+
+			root@localhost ~]# echo $?
+			0
+			[root@localhost ~]# ls /etcc
+			ls: 无法访问/etcc: 没有那个文件或目录
+			[root@localhost ~]# echo $?
+			2
+			[root@localhost ~]# lsss /etc
+			bash: lsss: 未找到命令...
+			[root@localhost ~]# echo $?
+			127
+
+         命令正常执行时，有的还会有命令返回值：
+             根据命令及其功能不同，结果各不相同；
+
+         引用命令的执行结果：
+             $(COMMAND)
+             或`COMMAND`
+               
+            例如：
+                [root@localhost ~]# ls
+                a_c  a_d  anaconda-ks.cfg  b_c  b_d  Desktop  Documents  Downloads  Music  Pictures  Public  Templates  Videos  桌面
+				[root@localhost ~]# mkdir $(date +%H-%M-%S)
+				[root@localhost ~]# ls
+				00-02-17  a_c  a_d  anaconda-ks.cfg  b_c  b_d  Desktop  Documents  Downloads  Music  Pictures  Public  Templates  Videos  桌面
+	
+	bash的基础特性： 引用
+	     强引用: ''     ---其内部的任何字串直接显示
+	     弱引用: ""     ---变量中所存储的值作变量替换显示出来
+	     命令引用: ``
+
+    
+    bash基础特性：  快捷键
+        Ctrl+a: 跳转至命令行行首
+        Ctrl+e: 跳转至命令行行尾
+
+        Ctrl+u: 删除行首至光标所在处之间的所有字符；
+        Ctrl+k: 删除光标所在处至行位的所有字符；
+
+        Ctrl+l:清屏，相当于clear
+    
+   
+
+   文件查看命令：cat,tac,head,tail,more,less
+
+      分屏查看命令：more和less
+      
+      more命令：
+          more FILE
+               特点：翻屏文件尾部后自动退出；
+
+               example:  
+               ~]# more /etc/rc.d/init.d/functions
+
+      less命令：    
+          less FILE
+               同man命令，man命令查看方式其实就是调用的less
+               
+               example:  
+               ~]# less /etc/rc.d/init.d/functions
+                 
+                 翻屏：
+                      空隔键盘（space）： 向文件尾部翻一屏
+                      b: 向文件首部翻一屏
+
+                      Ctrl+d: 向文件尾部翻半屏
+                      Ctrl+u: 向文件首部翻半屏
+
+                      回车键： 向文件尾部翻一行
+                      K：  向文件首部翻一行
+
+                      G: 跳转至最后一行
+                      g: 跳转至第一行
+                      
+                      #G： 跳转至指定行 （#代表数字）
+                      1G： 跳转至文件首部
+                 
+                 文本搜索:
+                     /keyword：从文件首部向文件尾部依次查找；  不区分字符大小写
+                     ?keyword  从文件尾部向文件尾部依次查找；         
+                         n：下一个（与查找命令方向相同）   
+                         N：上一个（与查找命令方向相反）
+                 退出：
+                    q: quit
+
+       head命令
+            查看文件的前n行； (不带参数默认显示前10行)
+               head [options] FILE     
+                  -n # 查看前#行
+                  -#   查看前#行
+
+       tail命令
+            查看文件的后n行；
+                tail [options] FILE
+                  -n # 查看后#行
+                  -#   查看后#行
+                  -f:  查看文件尾部内容结束后不退出，跟随显示新增的行
+  
+       stat命令：
+         stat - display file or file system status
+
+         stat FILE...
+
+         对于Linux文件系统来讲，每个文件都有两类数据组成
+            元数据： metadata
+            数据： data
+       
+        时间戳：
+           access time：2019-04-03 16:19:48.189297733 +0800     访问时间
+           modify time：2019-04-03 16:19:48.188297721 +0800     数据改动时间
+           change time：2019-04-03 16:19:48.188297721 +0800     元数据改动时间
+
+
+       touch命令
+
+     
+       touch - change file timestamps   
+
+       touch [OPTION]... FILE...         (如果touch的文件不存在默认会创建一个空文件)
+            -c: 指定的文件路径不存在是不予创建
+            -a:仅修改access time
+            -m:仅修改modify time
+            -t STAMP
+              use [[CC]YY]MMDDhhmm[.ss]   instead of current time
+
+
+     文件管理工具：cp,mv,rm
+
+        cp命令： copy
+            源文件：目标文件；
+
+      cp - copy files and directories
+
+       单源复制： cp [OPTION]... [-T] SOURCE DEST
+       多源复制： cp [OPTION]... SOURCE... DIRECTORY
+                 cp [OPTION]... -t DIRECTORY SOURCE...
+
+             单源复制： cp [OPTION]... [-T] SOURCE DEST
+                 如果DEST不存在，则事先创建此文件，并复制源文件的数据流至DEST中；
+                 如果DEST存在：
+                     如果DEST是非目录文件；则覆盖目标文件；
+                     如果DEST是目录文件：则现在DEST目录下创建一个与源文件同名的文件，并复制其数据流；
+
+             多源复制
+                      cp [OPTION]... SOURCE... DIRECTORY
+                      cp [OPTION]... -t DIRECTORY SOURCE...
+
+                如果DEST不存在：错误；
+                如果DEST存在:
+                     如果DEST是非目录文件： 错误；
+                     如果DEST是目录文件： 分别复制每个文件至目标目录中，并保持原名；
+
+          常用选项
+             -i: 交互式复制，即覆盖之前提醒用户去人；
+             -f: --force 强制覆盖目标文件；        
+             -r，-R: 递归复制目录
+             -d: 复制符号链接文件本身，而非其指向的源文件；
+             -a：-dR --preserve=all,archive,用于实现归档；
+             --preserv=
+                   mode:权限
+                   ownership:属主和属组
+                   timestamps：时间戳
+                   context:安全标签
+                   xattr:扩展属性
+                   links: 符号链接
+                   all: 上述所有属性
+
+    mv命令：move   mv - move (rename) files
+
+
+       mv [OPTION]... [-T] SOURCE DEST
+       mv [OPTION]... SOURCE... DIRECTORY
+       mv [OPTION]... -t DIRECTORY SOURCE...
+      
+      源文件和目标文件再同一个目录下，即重命名
+       常用选项：
+            -i:交互式
+            -f:force
+
+
+     rm命令： remove
+
+           rm [OPTION]... FILE...
+           
+           常用选项：
+              -i: interactive 交互式
+              -f: force  强制
+              -r： recursive 递归
+
+              删除目录：rm -rf /PATH/TO/DIR
+                   危险操作： rm -rf /*
+
+              注意：在生产环境中，所有不用的文件建议不要直接删除，而是移动至某个人专用目录；（模拟回收站）
+
+
+     变量：
+         命名的内存空间；
+             变量类型；
+                字符型:
+                数值型:
+                    精确数值
+                    近似数值
+
+                存储格式、数据范围、参与运算
+
+       数值型      8： 1000, 0000 1000
+             16:  1000. 0001 0000
+
+       字符型：  字符型，英文字母数字和符号等以8位二进制表示每一个字符，0xxx xxxx 127种变化
+                汉字，通常以16位二进制表示每一个字符，xxxx xxxx xxxx xxxx   6000多种变化
+       16:1,6，0
+          16bits
+       160
+
+   
+   课外作业：浮点数据如何存储
+   
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+					    
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
