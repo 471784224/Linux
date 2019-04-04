@@ -132,7 +132,7 @@
   (1)、stat命令：
            stat - display file or file system status
 
-  ​         stat FILE...
+   命令格式： stat FILE...
 
   ```
   [root@bogon ~]# stat /tmp/hi.txt 
