@@ -47,7 +47,7 @@
 
      (2)、mv命令
 
-  ​		用法和cp命令类似
+  ​	用法和cp命令类似
 
   ​		mv命令：move   mv - move (rename) files
 
@@ -121,7 +121,7 @@
 
   数据是是文件的内容，而元数据是文件的属性信息，我们可以用stat命令来查看文件的元数据
 
-  stat命令：
+  (1)、stat命令：
            stat - display file or file system status
 
   ​         stat FILE...
@@ -165,7 +165,7 @@
 
 ​		修改文件的时间戳信息使用touch命令
 
-​		touch命令
+​           (2)、touch命令
 
    		touch - change file timestamps   
 
