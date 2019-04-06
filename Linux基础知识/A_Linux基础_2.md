@@ -214,6 +214,18 @@
 
   
 
-- 6、
+- 6、**用户和组管理类命令的使用方法**
+
+  练习：创建用户tom,指定UID为5001，指定家目录为/tmp/tom, 指定shell为/bin/zsh, 指定基本组为tom，附加组为jack
+
+  ```
+  [root@localhost ~]# groupadd jack
+  [root@localhost ~]# groupadd tom
+  [root@localhost ~]# useradd -u 5001 -d /tmp/tom -s /bin/zsh -g tom -G jack tom
+  ```
+
+  
+
+  
 
   
