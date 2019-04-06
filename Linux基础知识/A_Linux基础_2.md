@@ -44,7 +44,7 @@
   	               xattr:扩展属性
   	               links: 符号链接
   	               all: 上述所有属性
-     
+  
 
   (2)、mv命令
 
@@ -186,7 +186,34 @@
 
 ​                PS:change time是无法指定修改的,他随元数据发生改变而随之改变
 
-- 4
-- 5
-- 6
-- 7
+- 4、**命令引用**
+
+  bash的基础特性： 引用
+  	     强引用: ''     ---其内部的任何字串直接显示
+  	     弱引用: ""     ---变量中所存储的值作变量替换显示出来
+  	     命令引用: ``或$()
+
+  举例：在/tmp目录下创建以tfile开头，后跟当前日期和时间的文件，文件名形如：tfile-2016-05-27-09-32-22
+
+  ```
+  [root@localhost ~]# touch /tmp/tfile-$(date +%Y-%m-%d-%H-%M-%S)
+  [root@localhost ~]# ls /tmp | grep tfile
+  tfile-2019-04-06-16-54-51
+  ```
+
+  
+
+- 5、**复制/etc目录下所有以p开头，以非数字结尾的文件或目录到/tmp/mytest1目录中**
+
+  ```
+  [root@localhost ~]# mkdir /tmp/mytest1
+  [root@localhost ~]# cp -r /etc/p*[^0-9] /tmp/mytest1
+  [root@localhost ~]# ls -F /tmp/mytest1/
+  pam.d/  passwd  passwd-  pbm2ppa.conf  pinforc  pki/  plymouth/  pm/  pnm2ppa.conf  popt.d/  postfix/  ppp/  prelink.conf.d/  printcap  profile  profile.d/  protocols  pulse/  purple/  python/
+  ```
+
+  
+
+- 6、
+
+  
