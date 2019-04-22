@@ -265,7 +265,6 @@ Linux哲学思想，组合小程序完成复杂任务
 					\S
 					KERNEL \R ON AN \M
 
-					[root@bogon ~]# cat /tmp/issue
 					[root@bogon ~]# cat /tmp/issue.tee 
 					\S
 					Kernel \r on an \m
@@ -486,6 +485,7 @@ Linux用户和组管理
                                       如果未指定，useradd将使用在 /etc/default/useradd 中 INACTIVE 变量指定的默认禁用周期，或者默认为-1.
 
 			注意：创建用户是的诸多默认设定配置文件为/etc/login.defs
+			      -d选项指定家目录时，家目录的父目录需要事先存在，例如指定家目录为/users/username   父目录/users需事先存在（被创建）
 
 			useradd -D:显示创建用户的默认配置；
 			useradd -D 选项：修改默认选项的值；
@@ -811,15 +811,403 @@ example
 					chmod [OPTION]... MODE[,MODE]... FILE...
 					chmod [OPTION]... OCTAL-MODE FILE...
 					chmod [OPTION]... --reference=RFILE FILE...
-
-
-                  
-
-
-
-
-
-
-          
-
                  
+                 三类用户：
+                      u:属主
+                      g:属组
+                      o:其他
+                      a:所有
+
+				（1）chmod [OPTION]... MODE[,MODE]... FILE...
+
+				       MODE表示法：
+
+				               A、赋权表示法：直接赋予用户对应权限，可以操作一类用户的所有权限位，
+				                  u=
+				                  g=
+				                  o=
+				                  a=
+				                  两种用户可以合并书写：ug=，uo=，go=,
+				                  权限可合并书写，r,w,x,rw,rwx,rx,wx,
+
+				               B、授权表示法：直接增加或删除一类用户的现有权限r,w,x;
+				                  u+,u-
+				                  g+,g-
+				                  o+,o-
+				                  a+,a-                 (有时候可省略a,直接写成+,-)
+				                  
+				                  两种用户可以合并书写：ug=，uo=，go=,
+				                  权限也可合并书写，r,w,x,rw,rwx,rx,wx,
+				                  尽量符合逻辑书写，不符合逻辑也不会报错（例如其他用户没有w权限用o-x也不会报错）
+				                  分别加不同权限时可以用逗号隔开，如：chmod u+w,g+r FILE
+				                  
+                                  ps:全局+w操作只会匹配到u（属主用户）
+
+				  (2)八进制表示法
+				      chmod [OPTION]... OCTAL-MODE FILE...
+
+				      example:
+				            chmod 660 /etc/shadow
+
+				  (3)引用权限命令
+				       chmod [OPTION]... --reference=RFILE FILE...      
+				     修改文件FILE的权限与被引用的文件RFILE的权限相同
+
+				  选项 ：
+				      -R,--recurisive:递归修改，会将目录以及目录下的子目录和所有文件一起修改  （此选项只建议授权表示法使用，避免影响目录内部的文件拥有其他不需要的权限，例如错误的将x权限给不可执行的文件）
+
+			         注意：用户仅能修改属主为自己的那些文件的权限       
+
+		exmaple.				赋权表示
+								[root@bogon ~]# ls
+								00-02-17  a_c  a_d  anaconda-ks.cfg  b_c  b_d  Desktop  Documents  Downloads  Music  Pictures  Public  Templates  Videos  桌面
+								[root@bogon ~]# ll anaconda-ks.cfg 
+								-rw-------. 1 root root 1257 3月  19 19:05 anaconda-ks.cfg
+								[root@bogon ~]# chmod g=rw anaconda-ks.cfg 
+								[root@bogon ~]# ll anaconda-ks.cfg 
+								-rw-rw----. 1 root root 1257 3月  19 19:05 anaconda-ks.cfg
+								[root@bogon ~]# chmod ug=r anaconda-ks.cfg 
+								[root@bogon ~]# ll anaconda-ks.cfg 
+								-r--r-----. 1 root root 1257 3月  19 19:05 anaconda-ks.cfg
+								[root@bogon ~]# chmod a=rwx anaconda-ks.cfg 
+								[root@bogon ~]# ll anaconda-ks.cfg 
+								-rwxrwxrwx. 1 root root 1257 3月  19 19:05 anaconda-ks.cfg
+								[root@bogon ~]# chmod u=rwx,g=rw,o= anaconda-ks.cfg 
+								[root@bogon ~]# ll anaconda-ks.cfg 
+								-rwxrw----. 1 root root 1257 3月  19 19:05 anaconda-ks.cfg
+
+								授权表示
+								[root@bogon ~]# ll anaconda-ks.cfg 
+								----------. 1 root root 1257 3月  19 19:05 anaconda-ks.cfg
+								[root@bogon ~]# chmod u+w anaconda-ks.cfg 
+								[root@bogon ~]# ll anaconda-ks.cfg 
+								--w-------. 1 root root 1257 3月  19 19:05 anaconda-ks.cfg
+								[root@bogon ~]# chmod ug+r anaconda-ks.cfg 
+								[root@bogon ~]# ll anaconda-ks.cfg 
+								-rw-r-----. 1 root root 1257 3月  19 19:05 anaconda-ks.cfg
+								[root@bogon ~]# chmod a+x anaconda-ks.cfg 
+								[root@bogon ~]# ll anaconda-ks.cfg 
+								-rwxr-x--x. 1 root root 1257 3月  19 19:05 anaconda-ks.cfg
+								[root@bogon ~]# chmod -x anaconda-ks.cfg 
+								[root@bogon ~]# ll anaconda-ks.cfg 
+								-rw-r-----. 1 root root 1257 3月  19 19:05 anaconda-ks.cfg
+								[root@bogon ~]# chmod u-w anaconda-ks.cfg 
+								[root@bogon ~]# ll anaconda-ks.cfg 
+								-r--r-----. 1 root root 1257 3月  19 19:05 anaconda-ks.cfg
+								[root@bogon ~]# chmod +w anaconda-ks.cfg 
+								[root@bogon ~]# ll anaconda-ks.cfg 
+								-rw-r-----. 1 root root 1257 3月  19 19:05 anaconda-ks.cfg            //全局+w操作只会匹配到u（属主用户），因为全局+w很危险
+
+								权限引用
+								[root@bogon tmp]# ll | head -3
+								总用量 276
+								-rw-r--r--. 1 root root      0 4月  19 19:16 a
+								-rw-r--r--. 1 root root      0 4月  19 19:16 b
+								[root@bogon tmp]# chmod 766 a
+								[root@bogon tmp]# ll | head -3
+								总用量 276
+								-rwxrw-rw-. 1 root root      0 4月  19 19:16 a
+								-rw-r--r--. 1 root root      0 4月  19 19:16 b
+								[root@bogon tmp]# chmod --reference=a b
+								[root@bogon tmp]# ll | head -3
+								总用量 276
+								-rwxrw-rw-. 1 root root      0 4月  19 19:16 a
+								-rwxrw-rw-. 1 root root      0 4月  19 19:16 b
+
+								-R选项	
+								root@bogon tmp]# ls -la skel
+								总用量 16
+								drwxr-xr-x.  3 root root   78 4月  19 19:43 .
+								drwxrwxrwt. 24 root root 4096 4月  19 19:43 ..
+								-rw-r--r--.  1 root root   18 4月  19 19:43 .bash_logout
+								-rw-r--r--.  1 root root  193 4月  19 19:43 .bash_profile
+								-rw-r--r--.  1 root root  231 4月  19 19:43 .bashrc
+								drwxr-xr-x.  4 root root   39 4月  19 19:43 .mozilla
+								[root@bogon tmp]# chmod -R go= skel
+								[root@bogon tmp]# ls -la skel
+								总用量 16
+								drwx------.  3 root root   78 4月  19 19:43 .
+								drwxrwxrwt. 24 root root 4096 4月  19 19:43 ..
+								-rw-------.  1 root root   18 4月  19 19:43 .bash_logout
+								-rw-------.  1 root root  193 4月  19 19:43 .bash_profile
+								-rw-------.  1 root root  231 4月  19 19:43 .bashrc
+								drwx------.  4 root root   39 4月  19 19:43 .mozilla
+								[root@bogon tmp]# chmod -R g+r skel/
+								[root@bogon tmp]# ls -la skel
+								总用量 16
+								drwxr-----.  3 root root   78 4月  19 19:43 .
+								drwxrwxrwt. 24 root root 4096 4月  19 19:45 ..
+								-rw-r-----.  1 root root   18 4月  19 19:43 .bash_logout
+								-rw-r-----.  1 root root  193 4月  19 19:43 .bash_profile
+								-rw-r-----.  1 root root  231 4月  19 19:43 .bashrc
+								drwxr-----.  4 root root   39 4月  19 19:43 .mozilla
+
+
+          从属关系管理命令：chown,chgrp             ----(仅管理员可修改文件的属主和属组)
+
+                 chown命令：    既能修改属主也能修改属组
+
+						chown [OPTION]... [OWNER][:[GROUP]] FILE...         //修改属主
+						chown [OPTION]... --reference=RFILE FILE...         //引用（参考修改）
+                   
+                    选项：
+                        -R:递归修改                   
+
+                 chgrp命令：    只能用于修改属组
+
+						chgrp [OPTION]... GROUP FILE...
+						chgrp [OPTION]... --reference=RFILE FILE...
+
+ 
+
+                    exmple.     修改属主
+								root@bogon tmp]# ls -la skel
+								总用量 16
+								drwxr-----.  3 root root   78 4月  19 19:43 .
+								drwxrwxrwt. 24 root root 4096 4月  19 19:45 ..
+								-rw-r-----.  1 root root   18 4月  19 19:43 .bash_logout
+								-rw-r-----.  1 root root  193 4月  19 19:43 .bash_profile
+								-rw-r-----.  1 root root  231 4月  19 19:43 .bashrc
+								drwxr-----.  4 root root   39 4月  19 19:43 .mozilla
+								[root@bogon tmp]# chown -R docker skel          
+								[root@bogon tmp]# ll -d skel
+								drwxr-----. 3 docker root 78 4月  19 19:43 skel
+								[root@bogon tmp]# ll -a skel
+								总用量 16
+								drwxr-----.  3 docker root   78 4月  19 19:43 .
+								drwxrwxrwt. 24 root   root 4096 4月  19 19:45 ..
+								-rw-r-----.  1 docker root   18 4月  19 19:43 .bash_logout
+								-rw-r-----.  1 docker root  193 4月  19 19:43 .bash_profile
+								-rw-r-----.  1 docker root  231 4月  19 19:43 .bashrc
+								drwxr-----.  4 docker root   39 4月  19 19:43 .mozilla
+
+								修改属主和属组
+								[root@bogon tmp]# ll -a skel/
+								总用量 16
+								drwxr-----.  3 docker root   78 4月  19 19:43 .
+								drwxrwxrwt. 24 root   root 4096 4月  19 19:55 ..
+								-rw-r-----.  1 docker root   18 4月  19 19:43 .bash_logout
+								-rw-r-----.  1 docker root  193 4月  19 19:43 .bash_profile
+								-rw-r-----.  1 docker root  231 4月  19 19:43 .bashrc
+								drwxr-----.  4 docker root   39 4月  19 19:43 .mozilla
+								[root@bogon tmp]# chown -R jacky:docker skel/
+								[root@bogon tmp]# ll -a skel/
+								总用量 16
+								drwxr-----.  3 jacky docker   78 4月  19 19:43 .
+								drwxrwxrwt. 24 root  root   4096 4月  19 19:57 ..
+								-rw-r-----.  1 jacky docker   18 4月  19 19:43 .bash_logout
+								-rw-r-----.  1 jacky docker  193 4月  19 19:43 .bash_profile
+								-rw-r-----.  1 jacky docker  231 4月  19 19:43 .bashrc
+								drwxr-----.  4 jacky docker   39 4月  19 19:43 .mozilla
+								[root@bogon tmp]# chown -R root.root skel/
+								[root@bogon tmp]# ll -a skel/
+								总用量 16
+								drwxr-----.  3 root root   78 4月  19 19:43 .
+								drwxrwxrwt. 24 root root 4096 4月  19 19:57 ..
+								-rw-r-----.  1 root root   18 4月  19 19:43 .bash_logout
+								-rw-r-----.  1 root root  193 4月  19 19:43 .bash_profile
+								-rw-r-----.  1 root root  231 4月  19 19:43 .bashrc
+								drwxr-----.  4 root root   39 4月  19 19:43 .mozilla
+
+                                引用（参考）修改
+								[root@bogon tmp]# ll a
+								-rwxrw-rw-. 1 tom tom 0 4月  19 19:16 a
+								[root@bogon tmp]# chown -R --reference=a /tmp/skel/
+								[root@bogon tmp]# ll -a skel/
+								总用量 16
+								drwxr-----.  3 tom  tom    78 4月  19 19:43 .
+								drwxrwxrwt. 24 root root 4096 4月  19 20:02 ..
+								-rw-r-----.  1 tom  tom    18 4月  19 19:43 .bash_logout
+								-rw-r-----.  1 tom  tom   193 4月  19 19:43 .bash_profile
+								-rw-r-----.  1 tom  tom   231 4月  19 19:43 .bashrc
+								drwxr-----.  4 tom  tom    39 4月  19 19:43 .mozilla
+              
+
+        思考：用户对目录有写权限，但对目录下的文件没有写权限时，
+        （1）能否修改目录下的文件？   不能。
+        （2）能否删除目录下的文件？   可以
+
+        umask:文件权限反向掩码，遮罩码;
+            文件：
+                666-umask
+            目录：
+                777-umask
+            注意：之所以文件用666去减，表示文件默认不能拥有执行权限；如果减得的结果中有执行权限，则需要将其加1；
+                umask:023
+                    666-023=643+1=644
+                    777-023=754
+
+            umask命令：
+                umask:   查看当前umask
+                umask  MASK:设置umask
+
+            注意：此类设定仅对当前shell进程有效；
+
+
+
+    练习：完成以下任务
+
+    1、新建系统组mariadb,新建系统用户mariadb,属于mariadb组，要求没有家目录，且shell为/sbin/nologin,尝试root切换至用户，查看其命令条回复；
+
+		[root@bogon ~]# groupadd mariadb -g 520
+		[root@bogon ~]# useradd mariadb -u 520 -g 520 -M -s /sbin/nologin
+		[root@bogon ~]# tail -1 /etc/passwd
+		mariadb:x:520:520::/home/mariadb:/sbin/nologin
+		[root@bogon ~]# tail -1 /etc/group
+		mariadb:x:520:
+		[root@bogon ~]# ls /home
+		archlinux  docker  dockeruser1  fedora  gentoo  jacky  k8s  keystone  mogilefs  openstack  slackware
+		[root@bogon ~]# su mariadb
+		This account is currently not available.
+	
+	2、新建GID为4000的组mageedu,新建用户gentoo,要求其家目录为/user/gentoo,密码同用户名；
+
+		[root@bogon ~]# groupadd mageedu -g 4000
+		[root@bogon ~]# mkdir /users
+		[root@bogon ~]# useradd -d /users/gentoo gentoo
+		[root@bogon ~]# ll -a /users/
+		总用量 0
+		drwxr-xr-x.  3 root   root    20 4月  22 15:00 .
+		dr-xr-xr-x. 18 root   root   237 4月  22 14:57 ..
+		drwx------.  3 gentoo gentoo  78 4月  22 15:00 gentoo
+		[root@bogon ~]# 
+		[root@bogon ~]# passwd gentoo 
+		更改用户 gentoo 的密码 。
+		新的 密码：
+		重新输入新的 密码：
+		passwd：所有的身份验证令牌已经成功更新。
+
+	3、新建用户fedora,其家目录为/users/fedora,密码同用户名；
+
+		[root@bogon ~]# useradd fedora -d /users/fedora
+		[root@bogon ~]# tail -1 /etc/passwd
+		fedora:x:5013:5014::/users/fedora:/bin/bash
+		[root@bogon ~]# ls /users
+		fedora  gentoo
+		[root@bogon ~]# passwd fedora 
+		更改用户 fedora 的密码 。
+		新的 密码：
+		无效的密码： 密码少于 8 个字符
+		重新输入新的 密码：
+		passwd：所有的身份验证令牌已经成功更新。
+
+	4、新建用户www,其家目录为/users/www;删除www用户，但保留其家目录；
+
+		[root@bogon ~]# useradd -d /users/www www
+		[root@bogon ~]# ls -la /users/www/
+		总用量 12
+		drwx------. 3 www  www   78 4月  22 16:22 .
+		drwxr-xr-x. 5 root root  45 4月  22 16:22 ..
+		-rw-r--r--. 1 www  www   18 8月   3 2017 .bash_logout
+		-rw-r--r--. 1 www  www  193 8月   3 2017 .bash_profile
+		-rw-r--r--. 1 www  www  231 8月   3 2017 .bashrc
+		drwxr-xr-x. 4 www  www   39 3月  19 14:25 .mozilla
+		[root@bogon ~]# userdel www
+		[root@bogon ~]# ls -la /users/www/
+		总用量 12
+		drwx------. 3 5014 5015  78 4月  22 16:22 .
+		drwxr-xr-x. 5 root root  45 4月  22 16:22 ..
+		-rw-r--r--. 1 5014 5015  18 8月   3 2017 .bash_logout
+		-rw-r--r--. 1 5014 5015 193 8月   3 2017 .bash_profile
+		-rw-r--r--. 1 5014 5015 231 8月   3 2017 .bashrc
+		drwxr-xr-x. 4 5014 5015  39 3月  19 14:25 .mozilla
+
+	5、为用户gentoo和fedor新增附加组mageedu；
+		[root@bogon ~]# usermod -G mageedu gentoo
+		[root@bogon ~]# usermod -G mageedu fedora 
+		[root@bogon ~]# tail -3 /etc/group
+		mageedu:x:4000:gentoo,fedora
+		gentoo:x:5013:
+		fedora:x:5014:
+
+
+
+	6、复制目录/var/log至/tmp目录，修改/tmp/log及其内部的所有文件的属组为mageedu,并让属组对目录本身拥有写权限；
+
+		[root@bogon ~]# cp -r /var/log /tmp
+		[root@bogon ~]# chown -R :mageedu /tmp/log
+		[root@bogon ~]# ll -a /tmp/log
+		总用量 7052
+		drwxr-xr-x. 20 root mageedu    4096 4月  22 16:58 .
+		drwxrwxrwt. 24 root root       4096 4月  22 16:58 ..
+		drwxr-xr-x.  2 root mageedu     204 4月  22 16:58 anaconda
+		drwx------.  2 root mageedu      23 4月  22 16:58 audit
+		-rw-------.  1 root mageedu       0 4月  22 16:58 boot.log
+		-rw-------.  1 root mageedu   26974 4月  22 16:58 boot.log-20190412
+		.
+		.
+		.
+		
+		root@bogon ~]# chmod g+w /tmp/log/
+		[root@bogon ~]# ls -la /tmp/log
+		总用量 7052
+		drwxrwxr-x. 20 root mageedu    4096 4月  22 16:58 .
+		drwxrwxrwt. 24 root root       4096 4月  22 17:06 ..
+		drwxr-xr-x.  2 root mageedu     204 4月  22 16:58 anaconda
+		drwx------.  2 root mageedu      23 4月  22 16:58 audit
+		-rw-------.  1 root mageedu       0 4月  22 16:58 boot.log
+		-rw-------.  1 root mageedu   26974 4月  22 16:58 boot.log-20190412
+		.
+		.
+		.
+
+
+    install命令：
+          install - copy files and set attributes--复制文件并设置属性
+       
+       单源复制：
+          install [OPTION]... [-T] SOURCE DEST
+       多源复制：
+          install [OPTION]... SOURCE... DIRECTORY...
+          install [OPTION]... -t DIRECTORY SOURCE...
+       创建目录：   
+          install [OPTION]... -d DIRECTORY...
+
+       
+       常用选项：
+           -m, --mode=MODE: 设定目标文件权限，默认为755
+           -o, --owner=OWNER: 设定目标文件属主;
+           -g, --group=GROUP: 设定目标文件属组;
+
+
+            example.
+					[root@bogon tmp]# install /etc/inittab /tmp
+					[root@bogon tmp]# ls -l inittab 
+					-rwxr-xr-x. 1 root root 511 4月  19 20:37 inittab
+					[root@bogon tmp]# ls -l /etc/inittab 
+					-rw-r--r--. 1 root root 511 8月   4 2017 /etc/inittab
+					[root@bogon tmp]# rm inittab 
+					rm：是否删除普通文件 "inittab"？y
+					[root@bogon tmp]# install -m 640 /etc/init
+					init.d/  inittab  
+					[root@bogon tmp]# install -m 640 /etc/inittab /tmp
+					[root@bogon tmp]# ls -l inittab 
+					-rw-r-----. 1 root root 511 4月  19 20:42 inittab
+					[root@bogon tmp]# install -o jacky -g docker /etc/inittab /root
+					[root@bogon tmp]# ls -l /root/inittab 
+					-rwxr-xr-x. 1 jacky docker 511 4月  19 20:44 /root/inittab
+
+					-d选项创建目录
+					[root@bogon tmp]# install -d hello
+
+					[root@bogon tmp]# ll -d hello
+					drwxr-xr-x. 2 root root 6 4月  19 20:45 hello
+
+
+
+       mktemp命令:   
+                           mktemp - create a temporary file or directory 创建临时文件或临时目录
+
+               mktemp [OPTION]... [TEMPLATE]
+                                                     TEMPLATE must contain at least 3 consecutive 'X's in last component（模板文件名中至少包含3个X）
+
+                             -d  --directory 创建临时目录
+                             -u  --dry-run   仅做测试，不会实际创建文件
+
+                  注意：mktemp会将创建的临时文件名直接返回，因此，可直接通过命令引用保存起来；
+
+
+     博客作业：用户及权限管理
+
+
+
