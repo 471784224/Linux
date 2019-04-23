@@ -176,6 +176,16 @@ groupmod [选项] GROUP
                 -M：指定组成员和-A的用途差不多；
                 -r：删除密码；
                 -R：限制用户登入组，只有组中的成员才可以用newgrp加入该组。
+example.
+
+```
+添加peter为users群组的管理员
+gpasswd -A peter users
+
+添加一个用户到一个组，同时保留以前添加的组时，可以使用gpasswd这个命令来添加操作用户
+gpasswd -a user_name group_name
+```
+
 ###### （5）newgrp命令：临时切换指定的组为基本组
 
     newgrp [-] [group]
