@@ -43,6 +43,7 @@ Linux下的用户标识就是：用户
                 Username <--> UID 
     
                 根据名称解析库进行: /etc/passwd
+                
 ###### 3、组类别
 
 和用户相对应的，组分为管理员组和普通用户组，普通用户组又包括系统组和登录组
@@ -107,6 +108,36 @@ password的存储位置：
                          sha512
     
                   在计算之时加salt，添加的随机数
+
+
+              /etc/passwd:    用户信息库
+                     name:password:UID:GID:GECOS:directory:shell
+    
+                     name: 用户名
+                     password: 可以是加密的密码，也可是占位符
+                     UID：
+                     GID： 用户所属的主组的ID号；
+                     GECOS： 用户的注释信息，可选
+                     directory: 用户的家目录；
+                     shell: 用户的默认shell,登录时默认shell程序
+    
+              /etc/shadow: 用户密码
+                    用户名:加密的密码:最近一次修改密码的时间:密码最短使用期限:最长使用期限:警告期段:过期期限:保留字段
+    
+                    查看帮助文档：man 5 shadow
+              
+              etc/group:组的信息库
+                   group_name:password:GID:user_list
+    
+                           user_list:该组的用户成员；以此组为附加组的用户的用户列表：
+              etc/gshadow
+                 group_name:password:admin_list:user_list
+                           组名:密码:管理员列表:组成员列表
+                      
+                    查看帮助文档：man 5 gshadow      
+
+
+
 #### 二、用户和组管理
 
 ##### 1、组管理命令
@@ -139,6 +170,10 @@ groupmod [选项] GROUP
               （1）gpasswd group: 修改指定组的密码，默认情况下组创建之后没有密码，设定密码主要用途在用newgrp命令临时切换用户到某个组作为自己的基本组时使用，如果用户实现不属于该组，切该组没有设定密码，用户将无法切换到此没有设定密码的组
                 -a USERNAME:向组中添加用户
                 -d USERNAME:从组中移除用户
+                -A：指定组管理员；
+                -M：指定组成员和-A的用途差不多；
+                -r：删除密码；
+                -R：限制用户登入组，只有组中的成员才可以用newgrp加入该组。
 ###### （5）newgrp命令：临时切换指定的组为基本组
 
     newgrp [-] [group]
@@ -476,67 +511,67 @@ linux系统中，每个文件，每个目录都有一组权限！ 使用ls -l命
 
 		chgrp [OPTION]... GROUP FILE...
 		chgrp [OPTION]... --reference=RFILE FILE...
-                    exmple.     修改属主
-    							root@bogon tmp]# ls -la skel
-    							总用量 16
-    							drwxr-----.  3 root root   78 4月  19 19:43 .
-    							drwxrwxrwt. 24 root root 4096 4月  19 19:45 ..
-    							-rw-r-----.  1 root root   18 4月  19 19:43 .bash_logout
-    							-rw-r-----.  1 root root  193 4月  19 19:43 .bash_profile
-    							-rw-r-----.  1 root root  231 4月  19 19:43 .bashrc
-    							drwxr-----.  4 root root   39 4月  19 19:43 .mozilla
-    							[root@bogon tmp]# chown -R docker skel          
-    							[root@bogon tmp]# ll -d skel
-    							drwxr-----. 3 docker root 78 4月  19 19:43 skel
-    							[root@bogon tmp]# ll -a skel
-    							总用量 16
-    							drwxr-----.  3 docker root   78 4月  19 19:43 .
-    							drwxrwxrwt. 24 root   root 4096 4月  19 19:45 ..
-    							-rw-r-----.  1 docker root   18 4月  19 19:43 .bash_logout
-    							-rw-r-----.  1 docker root  193 4月  19 19:43 .bash_profile
-    							-rw-r-----.  1 docker root  231 4月  19 19:43 .bashrc
-    							drwxr-----.  4 docker root   39 4月  19 19:43 .mozilla
-    
-    							修改属主和属组
-    							[root@bogon tmp]# ll -a skel/
-    							总用量 16
-    							drwxr-----.  3 docker root   78 4月  19 19:43 .
-    							drwxrwxrwt. 24 root   root 4096 4月  19 19:55 ..
-    							-rw-r-----.  1 docker root   18 4月  19 19:43 .bash_logout
-    							-rw-r-----.  1 docker root  193 4月  19 19:43 .bash_profile
-    							-rw-r-----.  1 docker root  231 4月  19 19:43 .bashrc
-    							drwxr-----.  4 docker root   39 4月  19 19:43 .mozilla
-    							[root@bogon tmp]# chown -R jacky:docker skel/
-    							[root@bogon tmp]# ll -a skel/
-    							总用量 16
-    							drwxr-----.  3 jacky docker   78 4月  19 19:43 .
-    							drwxrwxrwt. 24 root  root   4096 4月  19 19:57 ..
-    							-rw-r-----.  1 jacky docker   18 4月  19 19:43 .bash_logout
-    							-rw-r-----.  1 jacky docker  193 4月  19 19:43 .bash_profile
-    							-rw-r-----.  1 jacky docker  231 4月  19 19:43 .bashrc
-    							drwxr-----.  4 jacky docker   39 4月  19 19:43 .mozilla
-    							[root@bogon tmp]# chown -R root.root skel/
-    							[root@bogon tmp]# ll -a skel/
-    							总用量 16
-    							drwxr-----.  3 root root   78 4月  19 19:43 .
-    							drwxrwxrwt. 24 root root 4096 4月  19 19:57 ..
-    							-rw-r-----.  1 root root   18 4月  19 19:43 .bash_logout
-    							-rw-r-----.  1 root root  193 4月  19 19:43 .bash_profile
-    							-rw-r-----.  1 root root  231 4月  19 19:43 .bashrc
-    							drwxr-----.  4 root root   39 4月  19 19:43 .mozilla
-    
-                                引用（参考）修改
-    							[root@bogon tmp]# ll a
-    							-rwxrw-rw-. 1 tom tom 0 4月  19 19:16 a
-    							[root@bogon tmp]# chown -R --reference=a /tmp/skel/
-    							[root@bogon tmp]# ll -a skel/
-    							总用量 16
-    							drwxr-----.  3 tom  tom    78 4月  19 19:43 .
-    							drwxrwxrwt. 24 root root 4096 4月  19 20:02 ..
-    							-rw-r-----.  1 tom  tom    18 4月  19 19:43 .bash_logout
-    							-rw-r-----.  1 tom  tom   193 4月  19 19:43 .bash_profile
-    							-rw-r-----.  1 tom  tom   231 4月  19 19:43 .bashrc
-    							drwxr-----.  4 tom  tom    39 4月  19 19:43 .mozilla
+	                exmple.     修改属主
+								root@bogon tmp]# ls -la skel
+								总用量 16
+								drwxr-----.  3 root root   78 4月  19 19:43 .
+								drwxrwxrwt. 24 root root 4096 4月  19 19:45 ..
+								-rw-r-----.  1 root root   18 4月  19 19:43 .bash_logout
+								-rw-r-----.  1 root root  193 4月  19 19:43 .bash_profile
+								-rw-r-----.  1 root root  231 4月  19 19:43 .bashrc
+								drwxr-----.  4 root root   39 4月  19 19:43 .mozilla
+								[root@bogon tmp]# chown -R docker skel          
+								[root@bogon tmp]# ll -d skel
+								drwxr-----. 3 docker root 78 4月  19 19:43 skel
+								[root@bogon tmp]# ll -a skel
+								总用量 16
+								drwxr-----.  3 docker root   78 4月  19 19:43 .
+								drwxrwxrwt. 24 root   root 4096 4月  19 19:45 ..
+								-rw-r-----.  1 docker root   18 4月  19 19:43 .bash_logout
+								-rw-r-----.  1 docker root  193 4月  19 19:43 .bash_profile
+								-rw-r-----.  1 docker root  231 4月  19 19:43 .bashrc
+								drwxr-----.  4 docker root   39 4月  19 19:43 .mozilla
+	
+								修改属主和属组
+								[root@bogon tmp]# ll -a skel/
+								总用量 16
+								drwxr-----.  3 docker root   78 4月  19 19:43 .
+								drwxrwxrwt. 24 root   root 4096 4月  19 19:55 ..
+								-rw-r-----.  1 docker root   18 4月  19 19:43 .bash_logout
+								-rw-r-----.  1 docker root  193 4月  19 19:43 .bash_profile
+								-rw-r-----.  1 docker root  231 4月  19 19:43 .bashrc
+								drwxr-----.  4 docker root   39 4月  19 19:43 .mozilla
+								[root@bogon tmp]# chown -R jacky:docker skel/
+								[root@bogon tmp]# ll -a skel/
+								总用量 16
+								drwxr-----.  3 jacky docker   78 4月  19 19:43 .
+								drwxrwxrwt. 24 root  root   4096 4月  19 19:57 ..
+								-rw-r-----.  1 jacky docker   18 4月  19 19:43 .bash_logout
+								-rw-r-----.  1 jacky docker  193 4月  19 19:43 .bash_profile
+								-rw-r-----.  1 jacky docker  231 4月  19 19:43 .bashrc
+								drwxr-----.  4 jacky docker   39 4月  19 19:43 .mozilla
+								[root@bogon tmp]# chown -R root.root skel/
+								[root@bogon tmp]# ll -a skel/
+								总用量 16
+								drwxr-----.  3 root root   78 4月  19 19:43 .
+								drwxrwxrwt. 24 root root 4096 4月  19 19:57 ..
+								-rw-r-----.  1 root root   18 4月  19 19:43 .bash_logout
+								-rw-r-----.  1 root root  193 4月  19 19:43 .bash_profile
+								-rw-r-----.  1 root root  231 4月  19 19:43 .bashrc
+								drwxr-----.  4 root root   39 4月  19 19:43 .mozilla
+	
+	                            引用（参考）修改
+								[root@bogon tmp]# ll a
+								-rwxrw-rw-. 1 tom tom 0 4月  19 19:16 a
+								[root@bogon tmp]# chown -R --reference=a /tmp/skel/
+								[root@bogon tmp]# ll -a skel/
+								总用量 16
+								drwxr-----.  3 tom  tom    78 4月  19 19:43 .
+								drwxrwxrwt. 24 root root 4096 4月  19 20:02 ..
+								-rw-r-----.  1 tom  tom    18 4月  19 19:43 .bash_logout
+								-rw-r-----.  1 tom  tom   193 4月  19 19:43 .bash_profile
+								-rw-r-----.  1 tom  tom   231 4月  19 19:43 .bashrc
+								drwxr-----.  4 tom  tom    39 4月  19 19:43 .mozilla
  **   **思考：用户对目录有写权限，但对目录下的文件没有写权限时，**
 **    
 
@@ -580,27 +615,27 @@ linux系统中，每个文件，每个目录都有一组权限！ 使用ls -l命
 
 
 ​     
-       常用选项：
-           -m, --mode=MODE: 设定目标文件权限，默认为755
-           -o, --owner=OWNER: 设定目标文件属主;
-           -g, --group=GROUP: 设定目标文件属组;
-    example.
-    				[root@bogon tmp]# install /etc/inittab /tmp
-    				[root@bogon tmp]# ls -l inittab 
-    				-rwxr-xr-x. 1 root root 511 4月  19 20:37 inittab
-    				[root@bogon tmp]# ls -l /etc/inittab 
-    				-rw-r--r--. 1 root root 511 8月   4 2017 /etc/inittab
-    				[root@bogon tmp]# rm inittab 
-    				rm：是否删除普通文件 "inittab"？y
-    				[root@bogon tmp]# install -m 640 /etc/init
-    				init.d/  inittab  
-    				[root@bogon tmp]# install -m 640 /etc/inittab /tmp
-    				[root@bogon tmp]# ls -l inittab 
-    				-rw-r-----. 1 root root 511 4月  19 20:42 inittab
-    				[root@bogon tmp]# install -o jacky -g docker /etc/inittab /root
-    				[root@bogon tmp]# ls -l /root/inittab 
-    				-rwxr-xr-x. 1 jacky docker 511 4月  19 20:44 /root/inittab
-    
+​       常用选项：
+​           -m, --mode=MODE: 设定目标文件权限，默认为755
+​           -o, --owner=OWNER: 设定目标文件属主;
+​           -g, --group=GROUP: 设定目标文件属组;
+​    example.
+​    				[root@bogon tmp]# install /etc/inittab /tmp
+​    				[root@bogon tmp]# ls -l inittab 
+​    				-rwxr-xr-x. 1 root root 511 4月  19 20:37 inittab
+​    				[root@bogon tmp]# ls -l /etc/inittab 
+​    				-rw-r--r--. 1 root root 511 8月   4 2017 /etc/inittab
+​    				[root@bogon tmp]# rm inittab 
+​    				rm：是否删除普通文件 "inittab"？y
+​    				[root@bogon tmp]# install -m 640 /etc/init
+​    				init.d/  inittab  
+​    				[root@bogon tmp]# install -m 640 /etc/inittab /tmp
+​    				[root@bogon tmp]# ls -l inittab 
+​    				-rw-r-----. 1 root root 511 4月  19 20:42 inittab
+​    				[root@bogon tmp]# install -o jacky -g docker /etc/inittab /root
+​    				[root@bogon tmp]# ls -l /root/inittab 
+​    				-rwxr-xr-x. 1 jacky docker 511 4月  19 20:44 /root/inittab
+​    
     				-d选项创建目录
     				[root@bogon tmp]# install -d hello
     				[root@bogon tmp]# ll -d hello
