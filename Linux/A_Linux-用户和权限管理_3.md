@@ -43,7 +43,7 @@ Linux下的用户标识就是：用户
                 Username <--> UID 
     
                 根据名称解析库进行: /etc/passwd
-                
+
 ###### 3、组类别
 
 和用户相对应的，组分为管理员组和普通用户组，普通用户组又包括系统组和登录组
@@ -108,6 +108,8 @@ password的存储位置：
                          sha512
     
                   在计算之时加salt，添加的随机数
+
+##### 8、/etc/passwd,/etc/shadow,etc/group,/etc/gshadow 文件内容
 
 
               /etc/passwd:    用户信息库
@@ -636,10 +638,10 @@ linux系统中，每个文件，每个目录都有一组权限！ 使用ls -l命
 ​    				[root@bogon tmp]# ls -l /root/inittab 
 ​    				-rwxr-xr-x. 1 jacky docker 511 4月  19 20:44 /root/inittab
 ​    
-    				-d选项创建目录
-    				[root@bogon tmp]# install -d hello
-    				[root@bogon tmp]# ll -d hello
-    				drwxr-xr-x. 2 root root 6 4月  19 20:45 hello
+​    				-d选项创建目录
+​    				[root@bogon tmp]# install -d hello
+​    				[root@bogon tmp]# ll -d hello
+​    				drwxr-xr-x. 2 root root 6 4月  19 20:45 hello
 ###### （4）mktemp命令：创建临时文件
 
     mktemp - create a temporary file or directory 创建临时文件或临时目录
