@@ -310,7 +310,7 @@ linux系统中，每个文件，每个目录都有一组权限！ 使用ls -l命
 
     r:readable，可读
     w:writeable,可写
-    x:excuteable,可Z执行
+    x:excuteable,可执行
 **linux权限的表示结构**
 
                 rwxrwxrwx:
