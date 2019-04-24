@@ -1,8 +1,8 @@
-Linux-用户和权限管理
+## Linux-用户和权限管理
 
 ***
 
-#### 一、用户和组
+### 一、用户和组
 
 早期的计算机的使用场景，一般都是多用户，多任务下（ Multi-task,Multi-Users）。为了区别不同的使用者，隔离每个人对计算机资源的访问，引入了用户的概念。
 
@@ -20,7 +20,7 @@ Linux下的用户标识就是：用户
 
 组，即用户组，用户容器。
 
-##### 1、用户类别
+#### 1、用户类别
 
 用户分为管理用户和普通用户，其中普通用户又包括系统用户和登录用户
 
@@ -30,7 +30,7 @@ Linux下的用户标识就是：用户
           2、普通用户
               a.系统用户
               b.登录用户
-###### 2、用户标识
+#### 2、用户标识
 
       用户标识：UserID,UID
             16bits二进制数字：0+65535
@@ -44,7 +44,7 @@ Linux下的用户标识就是：用户
     
                 根据名称解析库进行: /etc/passwd
 
-###### 3、组类别
+#### 3、组类别
 
 和用户相对应的，组分为管理员组和普通用户组，普通用户组又包括系统组和登录组
 
@@ -52,7 +52,7 @@ Linux下的用户标识就是：用户
           2、普通用户组
               a、系统组
               b、登录组
-##### 4、组标识
+#### 4、组标识
 
        组标识：GroupID,GID
                   管理员组：0
@@ -62,7 +62,7 @@ Linux下的用户标识就是：用户
     
             名称解析：groupname <--> GID
                 解析库： /etc/group
-##### 5、组的另外两种分类方法
+#### 5、组的另外两种分类方法
 
 1. A、用户的基本组:primary group,也叫主组
 
@@ -72,7 +72,7 @@ Linux下的用户标识就是：用户
 
    B、公共组：组内包含了多个用户：public group
 
-##### 6、计算机是如何认证用户所提供的信息是否真实的？
+#### 6、计算机是如何认证用户所提供的信息是否真实的？
 
 认证信息：通过比对事先存储的，与登录时提供的信息是否一致；
 
@@ -80,7 +80,7 @@ password的存储位置：
 
                 /etc/shadow     用户密码
                 /etc/gshadow    组密码
-##### 7、密码
+#### 7、密码
 
            密码的使用策略
                1：使用随机密码：
@@ -109,7 +109,7 @@ password的存储位置：
     
                   在计算之时加salt，添加的随机数
 
-##### 8、/etc/passwd,/etc/shadow,etc/group,/etc/gshadow 文件内容
+#### 8、/etc/passwd,/etc/shadow,etc/group,/etc/gshadow 文件内容
 
 
               /etc/passwd:    用户信息库
@@ -140,17 +140,17 @@ password的存储位置：
 
 
 
-#### 二、用户和组管理
+### 二、用户和组管理
 
-##### 1、组管理命令
+#### 1、组管理命令
 
-###### （1）groupadd命令： 添加组
+##### （1）groupadd命令： 添加组
 
     groupadd [选项] group_name
             
             -g GID: 指定GID；如不指定会默认，上一个组的GID+1
             -r:创建系统组；                
-###### （2）groupmod命令：修改组属性
+##### （2）groupmod命令：修改组属性
 
 ```
 groupmod [选项] GROUP
@@ -159,11 +159,11 @@ groupmod [选项] GROUP
         -n new_name: 修改组名
 ```
 
-###### （3）groupdel命令： 删除组
+##### （3）groupdel命令： 删除组
 
 ​       `groupdel [选项] GROUP`
 
-###### （4）gpasswd命令：修改组密码
+##### （4）gpasswd命令：修改组密码
 
 组密码文件： /etc/gshadow
 
@@ -186,13 +186,13 @@ gpasswd -A peter users
 gpasswd -a user_name group_name
 ```
 
-###### （5）newgrp命令：临时切换指定的组为基本组
+##### （5）newgrp命令：临时切换指定的组为基本组
 
     newgrp [-] [group]
              -：会模拟用户重新登录以实现重新初始化其工作环境
-##### 2、用户管理命令
+#### 2、用户管理命令
 
-###### （1）useradd命令：添加用户
+##### （1）useradd命令：添加用户
 
           useradd [选项] 登录名
               -u, --uid UID: 指定UID；如不指定默认为上一个UID+1
@@ -216,7 +216,7 @@ gpasswd -a user_name group_name
     		useradd -D 选项：修改默认选项的值；
     
     		        修改的结果保存于/etc/default/useradd文件中；也可以通过直接编辑此文件实现
-###### （2）usermod命令：修改用户属性
+##### （2）usermod命令：修改用户属性
 
          usermod [选项] 登录名
                  -u，--uid UID: 修改用户的ID为此处指定的新的UID;
@@ -230,11 +230,11 @@ gpasswd -a user_name group_name
                  -s, --shell SHELL：修改用户的默认shell;
                  -L，--lock:锁定用户密码；即在用户原来的密码字符串之前添加一个"!";
                  -U，--unlock:解锁用户的密码;
-###### （3）userdel命令：删除用户
+##### （3）userdel命令：删除用户
 
          userdel [选项] 登录名
                  -r： 删除用户是一并删除其家目录
-###### （4）passwd命令：修改用户密码
+##### （4）passwd命令：修改用户密码
 
      passwd [-k] [-l] [-u [-f]] [-d] [-e] [-n mindays] [-x maxdays] [-w warndays] [-i inactivedays] [-S] [--stdin] [username]
     
@@ -251,7 +251,7 @@ gpasswd -a user_name group_name
     
                  --stdin:
                      echo "PASSWORD" | passwd --stdin USERNAME
-###### （5）chage命令：更改用户密码过期信息
+##### （5）chage命令：更改用户密码过期信息
 
              chage [选项] 登录名
     
@@ -260,7 +260,7 @@ gpasswd -a user_name group_name
                  -W
                  -M
                  -m
-###### （6）id命令：显示用户的真是和有效ID
+##### （6）id命令：显示用户的真是和有效ID
 
           id - print real and effective user and group IDs
                
@@ -269,7 +269,7 @@ gpasswd -a user_name group_name
                  -g: 仅显示用户的基本组ID
                  -G: 显示用户所属的所有组的ID，包括基本组和附加组
                  -n: 显示名字而非ID
-###### （7）su命令：切换用户
+##### （7）su命令：切换用户
 
     a.登录式切换：会通过读取目标用户的配置文件来重新初始化
     su - USERNAME
@@ -281,18 +281,19 @@ gpasswd -a user_name group_name
     注意：管理员（root）可无密码切换至其他任何用户；
     
           -c 'COMMAND': 仅以指定用户的身份运行此处指定的命令；运行一次之后直接退回
-###### （8）其他命令
+##### （8）其他命令
 
        chsh，  更改默认shell
        chfn,finger  更改finger信息，显示finger信息
        whoami
        pwck,检查用户密码
        grpck,检查组
-#### 三、权限管理
+### 三、权限管理
 
-##### 1.概念
+#### 1.概念
 
 **权限**
+
 linux系统中，每个文件，每个目录都有一组权限！ 使用ls -l命令即可看到！
 
 第一段内容，就是我们的权限位，这个权限位包含了十个字符！ 例如
@@ -374,9 +375,9 @@ linux系统中，每个文件，每个目录都有一组权限！ 使用ls -l命
 
 用八位进制权限表示法来表示：如rxwrwxrwx可表示为777，表示属主属组和其他用户都具有读写执行的权限
 
-##### 2. 权限管理命令
+#### 2. 权限管理命令
 
-###### （1）chmod命令：修改文件权限
+##### （1）chmod命令：修改文件权限
 
                    chmod - change file mode bits
     
@@ -512,7 +513,7 @@ linux系统中，每个文件，每个目录都有一组权限！ 使用ls -l命
     							-rw-r-----.  1 root root  193 4月  19 19:43 .bash_profile
     							-rw-r-----.  1 root root  231 4月  19 19:43 .bashrc
     							drwxr-----.  4 root root   39 4月  19 19:43 .mozilla
-###### （2）从属关系管理命令：chown,chgrp
+##### （2）从属关系管理命令：chown,chgrp
 
 仅管理员可修改文件的属主和属组，
 
@@ -616,7 +617,7 @@ linux系统中，每个文件，每个目录都有一组权限！ 使用ls -l命
 
 ​    注意：此类设定仅对当前shell进程有效；
 
-###### （3）install命令：复制文件并设置权限属性
+##### （3）install命令：复制文件并设置权限属性
 
           install - copy files and set attributes--复制文件并设置属性
        
@@ -627,35 +628,41 @@ linux系统中，每个文件，每个目录都有一组权限！ 使用ls -l命
           install [OPTION]... -t DIRECTORY SOURCE...
        创建目录：   
           install [OPTION]... -d DIRECTORY...
+          
+           常用选项：
+               -m, --mode=MODE: 设定目标文件权限，默认为755
+               -o, --owner=OWNER: 设定目标文件属主;
+               -g, --group=GROUP: 设定目标文件属组;
 
+   example.
+​    		
 
-​     
-​       常用选项：
-​           -m, --mode=MODE: 设定目标文件权限，默认为755
-​           -o, --owner=OWNER: 设定目标文件属主;
-​           -g, --group=GROUP: 设定目标文件属组;
-​    example.
-​    				[root@bogon tmp]# install /etc/inittab /tmp
-​    				[root@bogon tmp]# ls -l inittab 
-​    				-rwxr-xr-x. 1 root root 511 4月  19 20:37 inittab
-​    				[root@bogon tmp]# ls -l /etc/inittab 
-​    				-rw-r--r--. 1 root root 511 8月   4 2017 /etc/inittab
-​    				[root@bogon tmp]# rm inittab 
-​    				rm：是否删除普通文件 "inittab"？y
-​    				[root@bogon tmp]# install -m 640 /etc/init
-​    				init.d/  inittab  
-​    				[root@bogon tmp]# install -m 640 /etc/inittab /tmp
-​    				[root@bogon tmp]# ls -l inittab 
-​    				-rw-r-----. 1 root root 511 4月  19 20:42 inittab
-​    				[root@bogon tmp]# install -o jacky -g docker /etc/inittab /root
-​    				[root@bogon tmp]# ls -l /root/inittab 
-​    				-rwxr-xr-x. 1 jacky docker 511 4月  19 20:44 /root/inittab
-​    
-​    				-d选项创建目录
-​    				[root@bogon tmp]# install -d hello
-​    				[root@bogon tmp]# ll -d hello
-​    				drwxr-xr-x. 2 root root 6 4月  19 20:45 hello
-###### （4）mktemp命令：创建临时文件
+```
+					[root@bogon tmp]# install /etc/inittab /tmp
+					[root@bogon tmp]# ls -l inittab 
+					-rwxr-xr-x. 1 root root 511 4月  19 20:37 inittab
+					[root@bogon tmp]# ls -l /etc/inittab 
+					-rw-r--r--. 1 root root 511 8月   4 2017 /etc/inittab
+					[root@bogon tmp]# rm inittab 
+					rm：是否删除普通文件 "inittab"？y
+					[root@bogon tmp]# install -m 640 /etc/init
+					init.d/  inittab  
+					[root@bogon tmp]# install -m 640 /etc/inittab /tmp
+					[root@bogon tmp]# ls -l inittab 
+					-rw-r-----. 1 root root 511 4月  19 20:42 inittab
+					[root@bogon tmp]# install -o jacky -g docker /etc/inittab /root
+					[root@bogon tmp]# ls -l /root/inittab 
+					-rwxr-xr-x. 1 jacky docker 511 4月  19 20:44 /root/inittab
+
+					-d选项创建目录
+					[root@bogon tmp]# install -d hello
+					[root@bogon tmp]# ll -d hello
+					drwxr-xr-x. 2 root root 6 4月  19 20:45 hello
+```
+
+​	
+
+##### （4）mktemp命令：创建临时文件
 
     mktemp - create a temporary file or directory 创建临时文件或临时目录
     
