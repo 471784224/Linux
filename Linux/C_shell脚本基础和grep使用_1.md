@@ -176,8 +176,12 @@ PATH,HISTFILE,HISTSIZE,HISTFILESIZE,HISTCONTORL,SHELL,HOME,UID,PWD,OLDPWD
                      假(false, no, off, 0)
 
     逻辑运算符
+<<<<<<< HEAD
     
     与：&&
+=======
+    	     与：&&
+>>>>>>> e21c9e5682a1acc45151df11c2f90885a0a360a6
                   1 && 1 = 1
                   1 && 0 = 0
                   0 && 1 = 0
