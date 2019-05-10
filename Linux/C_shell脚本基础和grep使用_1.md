@@ -21,13 +21,13 @@
  	强类型变量编程语言
                    
 
-​	 弱类型变量编程语言：
+​	 弱类型变量编程语言：
 ​                                 
 
 ​				（1）bash把所有变量统统视作字符型;
 ​                                      
 
-​					  在指明做算数加减运算时自动转换为数字类型
+​					  在指明做算数加减运算时自动转换为数字类型
 ​                                      
 
 ​                                          不支持浮点数据，除非借助于外在工具
@@ -176,19 +176,20 @@ PATH,HISTFILE,HISTSIZE,HISTFILESIZE,HISTCONTORL,SHELL,HOME,UID,PWD,OLDPWD
                      假(false, no, off, 0)
 
     逻辑运算符
-    		 与：&&
+    
+    与：&&
                   1 && 1 = 1
                   1 && 0 = 0
                   0 && 1 = 0
                   0 && 0 = 0
              
-             或：||
+    或：||
                   1 || 1 = 1
                   1 || 0 = 1
                   0 || 1 = 1
                   0 || 0 = 0
              
-             非：！ 
+    非：！ 
                  ！ 1 = 0
                  ！ 0 = 1
              
@@ -234,7 +235,7 @@ example.
 				uid=5014(user1) gid=5015(user1) 组=5015(user1)
 				[root@bogon jacky]# id user1 || useradd user1
 				uid=5014(user1) gid=5015(user1) 组=5015(user1)
-				
+
 
 
 
@@ -341,9 +342,10 @@ C、据编程模型分类：
          （3）创建临时文件/tmp/myfile.XXXX;  
     
     		~]# nano test_script.sh
-    
-    		
-    		
+
+
+​    		
+​    		
     		#!/bin/bash
     		
     		echo "Show some under /etc"
@@ -423,7 +425,7 @@ C、据编程模型分类：
 
  2、用户个人：
 
-​	 ~/.bashrc
+​	 ~/.bashrc
 
  3、功用：
                    
@@ -540,7 +542,7 @@ C、据编程模型分类：
 
  	  []：匹配指定范围内的任意单个字符
 
-​		  有几种特殊格式如下：
+​		  有几种特殊格式如下：
 
                  [a-z]或[A-Z]：所有字母（范围匹配时不区分字母大小写）
                  [0-9]:    0-9所有数字
@@ -553,7 +555,7 @@ C、据编程模型分类：
                  [[:alnum:]]: 所有的字母和数字
                  [[:space:]]: 所有空白字符
                  [[:punct:]]: 所有标点符号
-​	   [^]：匹配指定范围外的任意单个字符
+​	   [^]：匹配指定范围外的任意单个字符
 
              	 [^[:upper:]]   匹配非大写字母以外的任意单个字符
               	 [^0-9]         匹配数字以外的任意单个字符（非数字字符）
@@ -635,22 +637,22 @@ $: **行尾锚定**; 用于模式的最右侧
     \<或\b: 词首锚定，用于单词模式的左侧;
     \>或\b: 词尾锚定，用于单词模式的右侧;
     \<PATTERN\>:匹配完整单词；
-		example.
-						[root@bogon ~]# grep "\<root" /etc/passwd
-						root:x:0:0:root:/root:/bin/bash
-						operator:x:11:0:operator:/root:/sbin/nologin
-						rootkit:x:5016:5017::/home/rootkit:/bin/bash
-						[root@bogon ~]# grep "\broot" /etc/passwd
-						root:x:0:0:root:/root:/bin/bash
-						operator:x:11:0:operator:/root:/sbin/nologin
-						rootkit:x:5016:5017::/home/rootkit:/bin/bash
-						[root@bogon ~]# grep "root\>" /etc/passwd
-						root:x:0:0:root:/root:/bin/bash
-						operator:x:11:0:operator:/root:/sbin/nologin
-						user7:x:5017:5018::/home/user7:/bin/chroot                        
-						[root@bogon ~]# grep "\<root\>" /etc/passwd
-						root:x:0:0:root:/root:/bin/bash
-						operator:x:11:0:operator:/root:/sbin/nologin
+    	example.
+    					[root@bogon ~]# grep "\<root" /etc/passwd
+    					root:x:0:0:root:/root:/bin/bash
+    					operator:x:11:0:operator:/root:/sbin/nologin
+    					rootkit:x:5016:5017::/home/rootkit:/bin/bash
+    					[root@bogon ~]# grep "\broot" /etc/passwd
+    					root:x:0:0:root:/root:/bin/bash
+    					operator:x:11:0:operator:/root:/sbin/nologin
+    					rootkit:x:5016:5017::/home/rootkit:/bin/bash
+    					[root@bogon ~]# grep "root\>" /etc/passwd
+    					root:x:0:0:root:/root:/bin/bash
+    					operator:x:11:0:operator:/root:/sbin/nologin
+    					user7:x:5017:5018::/home/user7:/bin/chroot                        
+    					[root@bogon ~]# grep "\<root\>" /etc/passwd
+    					root:x:0:0:root:/root:/bin/bash
+    					operator:x:11:0:operator:/root:/sbin/nologin
 #### 4.分组及引用
 
     \(\): 将一个或多个字符捆绑在一起，当作一个整体进行处理;
@@ -736,15 +738,15 @@ egrep支持扩展的正则表达式实现类似于grep文本过滤功能；grep 
     	   -l: lines，行数
     	   -w: words，单词数
     	   -c: bytes,字节数
-		example.
-			        [root@bogon ~]# wc /etc/fstab 
-					 12  60 541 /etc/fstab
-					[root@bogon ~]# wc -l /etc/fstab 
-					12 /etc/fstab
-					[root@bogon ~]# wc -w /etc/fstab 
-					60 /etc/fstab
-					[root@bogon ~]# wc -c /etc/fstab 
-					541 /etc/fstab
+    	example.
+    		        [root@bogon ~]# wc /etc/fstab 
+    				 12  60 541 /etc/fstab
+    				[root@bogon ~]# wc -l /etc/fstab 
+    				12 /etc/fstab
+    				[root@bogon ~]# wc -w /etc/fstab 
+    				60 /etc/fstab
+    				[root@bogon ~]# wc -c /etc/fstab 
+    				541 /etc/fstab
 ### （2）、CUT
 
    cut:文本截取工具
