@@ -176,7 +176,7 @@ PATH,HISTFILE,HISTSIZE,HISTFILESIZE,HISTCONTORL,SHELL,HOME,UID,PWD,OLDPWD
                      假(false, no, off, 0)
 
     逻辑运算符
-    		 与：&&
+    	     与：&&
                   1 && 1 = 1
                   1 && 0 = 0
                   0 && 1 = 0
