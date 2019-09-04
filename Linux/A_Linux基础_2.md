@@ -45,7 +45,7 @@
   	               links: 符号链接
   	               all: 上述所有属性
   	         -t,  --target-directory=目录	将所有参数指定的源文件/目录，复制至目标目录
-  	         -T, --no-target-directory	不包含目标目录，（如果目标为目录，复制是不包含目录本身）
+  	         -T, --no-target-directory	不包含目标目录，（如果目标为目录，复制时不包含目录本身）
 
 
   (2)、mv命令
